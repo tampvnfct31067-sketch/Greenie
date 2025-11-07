@@ -21,7 +21,16 @@ async function sendMessage() {
               role: "user",
               parts: [{ text: userMessage }]
             }
-          ]
+          ],
+          // (Tùy chọn) thêm system instruction mô tả nhiệm vụ chatbot
+          system_instruction: {
+            role: "system",
+            parts: [
+              {
+                text: "Bạn là Greenie — chatbot AI hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, dễ hiểu, có emoji 🌱."
+              }
+            ]
+          }
         }),
       }
     );
@@ -36,7 +45,7 @@ async function sendMessage() {
 
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "⚠️ Không có phản hồi từ chatbot (có thể API chưa trả kết quả).";
+      "⚠️ Không có phản hồi từ chatbot.";
     chat.innerHTML += `<div class="message bot">${botReply}</div>`;
   } catch (error) {
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
