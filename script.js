@@ -11,7 +11,7 @@ async function sendMessage() {
 
   try {
     const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro-latest:generateContent?key=" + API_KEY,
+      "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-pro-latest:generateContent?key=" + API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,7 +22,6 @@ async function sendMessage() {
               parts: [{ text: userMessage }]
             }
           ],
-          // (Tùy chọn) thêm system instruction mô tả nhiệm vụ chatbot
           system_instruction: {
             role: "system",
             parts: [
