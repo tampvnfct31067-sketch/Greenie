@@ -12,26 +12,32 @@ async function sendMessage() {
   chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`; 
   input.value = "";
 
-  try {
+ try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: userMessage }] }],
-          system_instruction: {
-            role: "system",
-            parts: [
-              {
-                text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *.",
-              },
-            ],
-          },
+          // 📌 SỬA LỖI Ở ĐÂY: Loại bỏ 'system_instruction'
+          contents: [
+            // 1. Thêm System Instruction dưới dạng tin nhắn 'system'
+            { 
+                role: "system", 
+                parts: [
+                    { 
+                        text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *."
+                    }
+                ]
+            },
+            // 2. Thêm tin nhắn của người dùng
+            { role: "user", parts: [{ text: userMessage }] }
+          ],
+          // TRƯỜNG "system_instruction" ĐÃ BỊ LOẠI BỎ
         }),
       }
     );
-
+   
     const data = await res.json();
 
     if (data.error) {
