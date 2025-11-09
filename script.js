@@ -1,7 +1,6 @@
-console.log("✅ Script đã load thành công!");
 
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-1.5-flash-latest";
+const MODEL = "gemini-2.0-pro-exp-02-05";
 
 document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("sendBtn");
