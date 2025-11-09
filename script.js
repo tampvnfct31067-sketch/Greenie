@@ -12,7 +12,7 @@ async function sendMessage() {
   chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
   input.value = "";
   
-  // Tự động cuộn xuống tin nhắn mới nhất
+  // Tự động cuộn xuống tin nhắn mới nhất 
   chat.scrollTop = chat.scrollHeight;
 
  try {
