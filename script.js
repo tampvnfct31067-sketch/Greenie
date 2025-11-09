@@ -1,20 +1,4 @@
 const API_KEY = "AIzaSyBFB8IB-u-6oEdes818EXPX0uR5eUDwkQA"; // Dán API key của bạn
-// Xóa ký hiệu Markdown như **, *, _, #
-const cleanText = (text) => {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '$1') // bỏ **in đậm**
-    .replace(/\*(.*?)\*/g, '$1')     // bỏ *in nghiêng*
-    .replace(/_(.*?)_/g, '$1')       // bỏ _in nghiêng_
-    .replace(/#+\s?(.*)/g, '$1');    // bỏ tiêu đề markdown
-};
-
-// Sau khi nhận phản hồi:
-const botReplyRaw =
-  data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-  "⚠️ Không có phản hồi từ chatbot.";
-const botReply = cleanText(botReplyRaw);
-chat.innerHTML += `<div class="message bot">${botReply}</div>`;
-
 async function sendMessage() {
   const input = document.getElementById("user-input");
   const chat = document.getElementById("chat");
