@@ -1,15 +1,30 @@
-const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA"; // 🔑 API key mới
-const MODEL = "gemini-1.5-flash-latest"; // ⚡ model nhẹ, ít lỗi quota
+const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
+const MODEL = "gemini-1.5-flash-latest";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sendBtn = document.getElementById("sendBtn");
+  const input = document.getElementById("userInput");
+
+  sendBtn.addEventListener("click", sendMessage);
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+});
 
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
-  const userMessage = input?.value.trim();
+  const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Hiển thị tin nhắn người dùng
   chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   input.value = "";
+
+  // Hiển thị đang gửi
+  const loadingMsg = document.createElement("div");
+  loadingMsg.classList.add("message", "bot");
+  loadingMsg.textContent = "⏳ Đang gửi...";
+  chat.appendChild(loadingMsg);
 
   try {
     const res = await fetch(
@@ -28,7 +43,7 @@ async function sendMessage() {
             role: "system",
             parts: [
               {
-                text: "Bạn là Greenie — chatbot AI nghiên cứu khoa học về giấy nảy mầm từ lục bình 🌱. Hãy trả lời thân thiện, dễ hiểu và ngắn gọn."
+                text: "Bạn là Greenie — chatbot AI nghiên cứu khoa học về giấy nảy mầm từ cây lục bình 🌱. Hãy trả lời thân thiện, dễ hiểu và không dùng ký hiệu Markdown."
               }
             ]
           }
@@ -36,8 +51,8 @@ async function sendMessage() {
       }
     );
 
-    // Xử lý phản hồi
     const data = await res.json();
+    chat.removeChild(loadingMsg);
 
     if (data.error) {
       chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
@@ -45,7 +60,6 @@ async function sendMessage() {
       return;
     }
 
-    // Làm sạch Markdown để không có dấu **, *...
     const cleanText = (text) => {
       return text
         .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -61,6 +75,7 @@ async function sendMessage() {
 
     chat.innerHTML += `<div class="message bot">${botReply}</div>`;
   } catch (error) {
+    chat.removeChild(loadingMsg);
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
     console.error("Chi tiết lỗi:", error);
   }
