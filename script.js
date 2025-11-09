@@ -1,5 +1,5 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "models/gemini-1.5-flash"; // Model ổn định nhất cho chatbot hiện tại
+const MODEL = "gemini-1.5-flash"; // hoặc gemini-1.5-pro nếu bạn có quyền dùng
 
 async function sendMessage() {
   const input = document.getElementById("userInput");
@@ -7,6 +7,7 @@ async function sendMessage() {
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
+  // Hiển thị tin nhắn người dùng
   chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   input.value = "";
 
@@ -27,7 +28,7 @@ async function sendMessage() {
             role: "system",
             parts: [
               {
-                text: "Bạn là Greenie 🌱 — chatbot AI nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng và ngắn gọn.",
+                text: "Bạn là Greenie 🌱 — chatbot AI nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, gọn gàng.",
               },
             ],
           },
@@ -54,3 +55,4 @@ async function sendMessage() {
 
   chat.scrollTop = chat.scrollHeight;
 }
+
