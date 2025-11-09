@@ -1,5 +1,8 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.5-flash"; // Dùng model ổn định và nhanh
+const MODEL = "gemini-2.5-flash"; // Dùng model nhanh và ổn định
+
+// ** Hướng dẫn hệ thống (System Instruction) được đưa vào biến riêng **
+const SYSTEM_PROMPT = "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *.";
 
 async function sendMessage() {
   const input = document.getElementById("user-input");
@@ -7,10 +10,9 @@ async function sendMessage() {
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Dùng class user-msg để khớp với style.css (đã sửa ở các bước trước)
+  // Gắn tin nhắn người dùng (Sử dụng class user-msg để khớp CSS)
   chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`; 
   input.value = "";
-
   chat.scrollTop = chat.scrollHeight;
 
   try {
@@ -20,40 +22,21 @@ async function sendMessage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // 🚨 SỬA LỖI CUỐI CÙNG: Loại bỏ hoàn toàn trường system_instruction
-          // và đặt hướng dẫn vào phần contents, dùng vai trò "user" cho hướng dẫn
-          // để khắc phục lỗi "Unknown name system_instruction".
+          // Cấu trúc JSON đơn giản nhất để tránh lỗi cú pháp
           contents: [
             {
               role: "user",
-              parts: [
-                {
-                  // Hướng dẫn hệ thống được thêm vào đầu tiên
-                  text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *. Hướng dẫn này thay cho System Instruction."
-                }
-              ]
-            },
-            { 
-                role: "user", // Tin nhắn thực tế của người dùng
-                parts: [{ text: userMessage }] 
-            }
-          ],
-          generationConfig: { temperature: 0.7, topP: 0.9 }
+              parts: [{ text: SYSTEM_PROMPT + "\n\n" + userMessage }] // Gộp hướng dẫn vào tin nhắn đầu tiên
+            }
+          ]
         }),
       }
     );
 
     const data = await res.json();
 
-    // Kiểm tra lỗi 503
-    if (data.error?.code === 503) {
-      chat.innerHTML += `<div class="message error">⚠️ Máy chủ quá tải. Đang thử lại sau 5 giây...</div>`;
-      console.warn("Máy chủ quá tải, thử lại sau...");
-      setTimeout(sendMessage, 5000);
-      return;
-    }
-
     if (data.error) {
+      // Sửa lỗi class CSS
       chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
       console.error("Chi tiết lỗi:", data.error);
       return;
@@ -63,7 +46,7 @@ async function sendMessage() {
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ Không có phản hồi từ chatbot.";
     
-    // SỬA CLASS CSS: Dùng bot-msg để khớp với style.css
+    // Sửa lỗi class CSS
     chat.innerHTML += `<div class="message bot-msg">${botReply}</div>`; 
   } catch (error) {
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
@@ -74,7 +57,7 @@ async function sendMessage() {
 }
 
 // ----------------------------------------------------
-// KHẮC PHỤC LỖI KHÔNG BẤM GỬI ĐƯỢC: Đảm bảo hai đoạn này có ở cuối file
+// Đảm bảo phần gắn sự kiện này nằm ở cuối file để DOM đã sẵn sàng
 
 // Gắn sự kiện nút "Gửi"
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
