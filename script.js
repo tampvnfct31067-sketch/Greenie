@@ -15,30 +15,32 @@ async function sendMessage() {
   // Tự động cuộn xuống tin nhắn mới nhất
   chat.scrollTop = chat.scrollHeight;
 
-  try {
+ try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // SỬA LỖI API: Đặt system instruction vào mảng contents với role: "system"
+          // ✅ SỬA LỖI: Đặt system instruction vào mảng contents với role: "system"
           contents: [
             { 
                 role: "system", 
                 parts: [
                     { 
+                        // Nội dung hướng dẫn hệ thống
                         text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *."
                     }
                 ]
             },
-            // Tin nhắn của người dùng
+            // Tin nhắn của người dùng sau đó
             { role: "user", parts: [{ text: userMessage }] }
           ],
+          // TRƯỜNG "system_instruction" ĐÃ BỊ LOẠI BỎ HOÀN TOÀN
         }),
       }
     );
-
+   
     const data = await res.json();
 
     if (data.error) {
