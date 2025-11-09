@@ -1,131 +1,131 @@
 /* 🌿 Toàn bộ giao diện nền */
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #f6fff8;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+  font-family: "Arial", sans-serif;
+  background-color: #f6fff8;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 /* 🧠 Tiêu đề chatbot */
 h2 {
-  background-color: #b7e4c7;
-  color: #1b4332;
-  padding: 20px;
-  margin: 0;
-  font-size: 22px;
-  border-bottom: 3px solid #95d5b2;
+  background-color: #b7e4c7;
+  color: #1b4332;
+  padding: 20px;
+  margin: 0;
+  font-size: 22px;
+  border-bottom: 3px solid #95d5b2;
 }
 
 /* 💬 Khung chat chính */
 #chat {
-  background: #f4fdf6;
-  border-radius: 20px;
-  padding: 20px;
-  width: 90%;
-  max-width: 700px;
-  margin: 25px auto;
-  height: 420px;
-  overflow-y: auto;
-  text-align: left;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background: #f4fdf6;
+  border-radius: 20px;
+  padding: 20px;
+  width: 90%;
+  max-width: 700px;
+  margin: 25px auto;
+  height: 420px;
+  overflow-y: auto;
+  text-align: left;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 👩‍💬 Tin nhắn người dùng */
 .user-msg {
-  text-align: right;
-  background: #d8f3dc;
-  padding: 10px 14px;
-  margin: 8px;
-  border-radius: 15px 15px 0 15px;
-  display: inline-block;
-  max-width: 75%;
-  float: right;
-  clear: both;
-  color: #1b4332;
-  font-size: 15px;
+  text-align: right;
+  background: #d8f3dc;
+  padding: 10px 14px;
+  margin: 8px;
+  border-radius: 15px 15px 0 15px;
+  display: inline-block;
+  max-width: 75%;
+  float: right;
+  clear: both;
+  color: #1b4332;
+  font-size: 15px;
 }
 
 /* 🤖 Tin nhắn bot */
 .bot-msg {
-  text-align: left;
-  background: #ffffff;
-  padding: 10px 14px;
-  margin: 8px;
-  border-radius: 15px 15px 15px 0;
-  display: inline-block;
-  max-width: 75%;
-  float: left;
-  clear: both;
-  color: #081c15;
-  font-size: 15px;
+  text-align: left;
+  background: #ffffff;
+  padding: 10px 14px;
+  margin: 8px;
+  border-radius: 15px 15px 15px 0;
+  display: inline-block;
+  max-width: 75%;
+  float: left;
+  clear: both;
+  color: #081c15;
+  font-size: 15px;
 }
 
 /* ⚠️ Thông báo lỗi */
 .error {
-  color: #d62828;
-  background: #ffe6e6;
-  padding: 8px 12px;
-  margin: 8px;
-  border-radius: 8px;
-  display: inline-block;
-  font-size: 14px;
-  clear: both;
+  color: #d62828;
+  background: #ffe6e6;
+  padding: 8px 12px;
+  margin: 8px;
+  border-radius: 8px;
+  display: inline-block;
+  font-size: 14px;
+  clear: both;
 }
 
 /* 📥 Vùng nhập và nút gửi */
 .input-container {
-  margin: 20px auto;
-  text-align: center;
+  margin: 20px auto;
+  text-align: center;
 }
 
-/* ✏️ Ô nhập câu hỏi */
-#user-nput {
-  width: 65%;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #a3b18a;
-  outline: none;
-  transition: 0.2s;
+/* ✏️ Ô nhập câu hỏi - Sửa #userInput thành #user-input */
+#user-input {
+  width: 65%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #a3b18a;
+  outline: none;
+  transition: 0.2s;
 }
 
-#userInput:focus {
-  border-color: #52b788;
-  box-shadow: 0 0 5px #95d5b2;
+#user-input:focus {
+  border-color: #52b788;
+  box-shadow: 0 0 5px #95d5b2;
 }
 
 /* 🚀 Nút gửi */
 button {
-  padding: 14px 22px;
-  font-size: 16px;
-  background-color: #74c69d;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: background-color 0.2s, transform 0.1s;
+  padding: 14px 22px;
+  font-size: 16px;
+  background-color: #74c69d;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 button:hover {
-  background-color: #52b788;
-  transform: scale(1.05);
+  background-color: #52b788;
+  transform: scale(1.05);
 }
 
 button:active {
-  background-color: #40916c;
-  transform: scale(0.97);
+  background-color: #40916c;
+  transform: scale(0.97);
 }
 
 /* 🪟 Cuộn mượt */
 #chat::-webkit-scrollbar {
-  width: 8px;
+  width: 8px;
 }
 #chat::-webkit-scrollbar-thumb {
-  background-color: #b7e4c7;
-  border-radius: 4px;
+  background-color: #b7e4c7;
+  border-radius: 4px;
 }
 #chat::-webkit-scrollbar-thumb:hover {
-  background-color: #95d5b2;
+  background-color: #95d5b2;
 }
