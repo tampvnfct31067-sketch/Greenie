@@ -7,7 +7,8 @@ async function sendMessage() {
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  chat.innerHTML += `<div class="message user">${userMessage}</div>`;
+  // Hiển thị tin nhắn người dùng
+  chat.innerHTML += `<div class="user-msg">${userMessage}</div>`;
   input.value = "";
 
   try {
@@ -33,7 +34,7 @@ async function sendMessage() {
     const data = await res.json();
 
     if (data.error) {
-      chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
+      chat.innerHTML += `<div class="error">❌ Lỗi API: ${data.error.message}</div>`;
       console.error("Chi tiết lỗi:", data.error);
       return;
     }
@@ -41,9 +42,9 @@ async function sendMessage() {
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ Không có phản hồi từ chatbot.";
-    chat.innerHTML += `<div class="message bot">${botReply}</div>`;
+    chat.innerHTML += `<div class="bot-msg">${botReply}</div>`;
   } catch (error) {
-    chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
+    chat.innerHTML += `<div class="error">❌ Lỗi kết nối: ${error.message}</div>`;
     console.error("Chi tiết lỗi:", error);
   }
 
@@ -52,3 +53,8 @@ async function sendMessage() {
 
 // Gắn sự kiện nút gửi
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
+
+// Gửi khi nhấn Enter
+document.getElementById("userInput").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") sendMessage();
+});
