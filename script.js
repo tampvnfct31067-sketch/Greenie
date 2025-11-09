@@ -1,3 +1,5 @@
+console.log("✅ Script đã load thành công!");
+
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
 const MODEL = "gemini-1.5-flash-latest";
 
