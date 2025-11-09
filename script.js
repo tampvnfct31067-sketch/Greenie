@@ -1,12 +1,12 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.0-pro-exp-02-05"; 
+const MODEL = "gemini-2.0-pro-exp-02-05";
+
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Hiển thị tin nhắn người dùng
   chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   input.value = "";
 
@@ -17,12 +17,7 @@ async function sendMessage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: userMessage }],
-            },
-          ],
+          contents: [{ role: "user", parts: [{ text: userMessage }] }],
           system_instruction: {
             role: "system",
             parts: [
@@ -54,4 +49,6 @@ async function sendMessage() {
 
   chat.scrollTop = chat.scrollHeight;
 }
+
+// Gắn sự kiện nút gửi
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
