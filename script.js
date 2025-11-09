@@ -1,5 +1,5 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.5-flash"; // Nên dùng model mới nhất, nhanh và hiệu quả
+const MODEL = "gemini-2.5-flash"; 
 
 async function sendMessage() {
   // Sử dụng user-input để khớp với HTML
@@ -12,35 +12,27 @@ async function sendMessage() {
   chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
   input.value = "";
   
-  // Tự động cuộn xuống tin nhắn mới nhất 
   chat.scrollTop = chat.scrollHeight;
 
- try {
+  try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // ✅ SỬA LỖI: Đặt system instruction vào mảng contents với role: "system"
+          // ✅ Sửa lỗi role: Chỉ gửi nội dung chat user/model.
           contents: [
-            { 
-                role: "system", 
-                parts: [
-                    { 
-                        // Nội dung hướng dẫn hệ thống
-                        text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *."
-                    }
-                ]
-            },
-            // Tin nhắn của người dùng sau đó
             { role: "user", parts: [{ text: userMessage }] }
           ],
-          // TRƯỜNG "system_instruction" ĐÃ BỊ LOẠI BỎ HOÀN TOÀN
+          
+          // 💡 Khắc phục lỗi: Đưa system_instruction trở lại làm trường riêng
+          system_instruction: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *.",
+
         }),
       }
     );
-   
+
     const data = await res.json();
 
     if (data.error) {
@@ -70,7 +62,7 @@ document.getElementById("sendBtn").addEventListener("click", sendMessage);
 // Gắn sự kiện nhấn Enter
 document.getElementById("user-input").addEventListener("keypress", (e) => {
   if (e.key === 'Enter') {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định (tạo dòng mới)
+    e.preventDefault(); 
     sendMessage();
   }
 });
