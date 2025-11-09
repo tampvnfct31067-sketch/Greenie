@@ -1,68 +1,50 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.5-flash"; 
-
 async function sendMessage() {
-  // Sử dụng user-input để khớp với HTML
-  const input = document.getElementById("user-input");
-  const chat = document.getElementById("chat");
-  const userMessage = input.value.trim();
-  if (!userMessage) return;
+  const input = document.getElementById("user-input");
+  const chat = document.getElementById("chat");
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
 
-  // Dùng class user-msg để khớp với style.css
-  chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
-  input.value = "";
-  
-  chat.scrollTop = chat.scrollHeight;
+  chat.innerHTML += `<div class="message user">${userMessage}</div>`;
+  input.value = "";
 
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          // ✅ Sửa lỗi role: Chỉ gửi nội dung chat user/model.
-          contents: [
-            { role: "user", parts: [{ text: userMessage }] }
-          ],
-          
-          // 💡 Khắc phục lỗi: Đưa system_instruction trở lại làm trường riêng
-          system_instruction: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *.",
+  try {
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=" + API_KEY,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: userMessage }] }],
+          generationConfig: { temperature: 0.7, topP: 0.9 }
+        }),
+      }
+    );
 
-        }),
-      }
-    );
+    const data = await res.json();
 
-    const data = await res.json();
+    // Kiểm tra lỗi 503 và tự động thử lại
+    if (data.error?.code === 503) {
+      chat.innerHTML += `<div class="message error">⚠️ Máy chủ quá tải. Đang thử lại sau 5 giây...</div>`;
+      console.warn("Máy chủ quá tải, thử lại sau...");
+      setTimeout(sendMessage, 5000);
+      return;
+    }
 
-    if (data.error) {
-      // Dùng class error để khớp với style.css
-      chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
-      console.error("Chi tiết lỗi:", data.error);
-      return;
-    }
+    if (data.error) {
+      chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
+      console.error("Chi tiết lỗi:", data.error);
+      return;
+    }
 
-    const botReply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "⚠️ Không có phản hồi từ chatbot.";
-    
-    // Dùng class bot-msg để khớp với style.css
-    chat.innerHTML += `<div class="message bot-msg">${botReply}</div>`; 
-  } catch (error) {
-    chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
-    console.error("Chi tiết lỗi:", error);
-  }
+    const botReply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "⚠️ Không có phản hồi từ chatbot.";
+    chat.innerHTML += `<div class="message bot">${botReply}</div>`;
+  } catch (error) {
+    chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
+    console.error("Chi tiết lỗi:", error);
+  }
 
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
-
-// Gắn sự kiện nút gửi
-document.getElementById("sendBtn").addEventListener("click", sendMessage);
-
-// Gắn sự kiện nhấn Enter
-document.getElementById("user-input").addEventListener("keypress", (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault(); 
-    sendMessage();
-  }
-});
