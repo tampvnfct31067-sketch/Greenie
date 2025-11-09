@@ -1,52 +1,34 @@
-const API_KEY = "AIzaSyBFB8IB-u-6oEdes818EXPX0uR5eUDwkQA"; // Dán API key của bạn
-
-// Hàm xóa ký hiệu Markdown để hiển thị sạch đẹp
-function cleanText(text) {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, "$1") // bỏ **in đậm**
-    .replace(/\*(.*?)\*/g, "$1")     // bỏ *in nghiêng*
-    .replace(/_(.*?)_/g, "$1")       // bỏ _in nghiêng_
-    .replace(/#+\s?(.*)/g, "$1")     // bỏ tiêu đề markdown
-    .replace(/`/g, "");              // bỏ ký hiệu code `
-}
-
 async function sendMessage() {
-  const input = document.getElementById("userInput");
+  const input = document.getElementById("user-input");
   const chat = document.getElementById("chat");
-  const userMessage = input?.value?.trim();
-
+  const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Hiển thị tin nhắn người dùng
   chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   input.value = "";
 
   try {
     const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + API_KEY,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=" + API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: userMessage }],
-            },
-          ],
-          system_instruction: {
-            role: "system",
-            parts: [
-              {
-                text: "Bạn là Greenie 🌱 — chatbot AI hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, dễ hiểu, và khuyến khích người dùng bảo vệ môi trường.",
-              },
-            ],
-          },
+          contents: [{ role: "user", parts: [{ text: userMessage }] }],
+          generationConfig: { temperature: 0.7, topP: 0.9 }
         }),
       }
     );
 
     const data = await res.json();
+
+    // Kiểm tra lỗi 503 và tự động thử lại
+    if (data.error?.code === 503) {
+      chat.innerHTML += `<div class="message error">⚠️ Máy chủ quá tải. Đang thử lại sau 5 giây...</div>`;
+      console.warn("Máy chủ quá tải, thử lại sau...");
+      setTimeout(sendMessage, 5000);
+      return;
+    }
 
     if (data.error) {
       chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
@@ -54,13 +36,9 @@ async function sendMessage() {
       return;
     }
 
-    // Làm sạch nội dung phản hồi
-    const botReplyRaw =
+    const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ Không có phản hồi từ chatbot.";
-    const botReply = cleanText(botReplyRaw);
-
-    // Hiển thị phản hồi từ bot
     chat.innerHTML += `<div class="message bot">${botReply}</div>`;
   } catch (error) {
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
