@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class App {
   public static void main(String[] args) {
-    String apiKey = "AIzaSyBFB8IB-u-6oEdes818EXPX0uR5eUDwkQA";
+    String apiKey = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
     Client client = Client.builder().apiKey(apiKey).build();
     Gson gson = new Gson();
 
