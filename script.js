@@ -1,15 +1,17 @@
-async function sendMessage() {
-  const input = document.getElementById("user-input").value;
-  const chat = document.getElementById("chat");
-  if (!input) return;
+const API_KEY = "AIzaSyBFB8IB-u-6oEdes818EXPX0uR5eUDwkQA"; // Dán API key của bạn
 
-  // Hiển thị tin nhắn người dùng
-  chat.innerHTML += `<div class="user-msg">🧑‍💬 ${input}</div>`;
-  document.getElementById("user-input").value = "";
+async function sendMessage() {
+  const input = document.getElementById("user-input");
+  const chat = document.getElementById("chat");
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
+
+  chat.innerHTML += `<div class="message user">${userMessage}</div>`;
+  input.value = "";
 
   try {
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=AIzaSyBFB8IB-u-6oEdes818EXPX0uR5eUDwkQA",
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=" + API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -17,30 +19,33 @@ async function sendMessage() {
           contents: [
             {
               role: "user",
-              parts: [
-                {
-                  text:
-                    "Bạn là chatbot nghiên cứu khoa học hỗ trợ báo cáo đề tài 'Giấy nảy mầm từ cây lục bình'. Trả lời ngắn gọn, dễ hiểu, dùng tiếng Việt.\n\nCâu hỏi: " +
-                    input,
-                },
-              ],
-            },
+              parts: [{ text: userMessage }]
+            }
           ],
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9
+          }
         }),
       }
     );
 
-    const data = await response.json();
+    const data = await res.json();
 
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
-      const reply = data.candidates[0].content.parts[0].text;
-      chat.innerHTML += `<div class="bot-msg">🤖 ${reply}</div>`;
-    } else {
-      chat.innerHTML += `<div class="error">⚠️ Lỗi: ${JSON.stringify(data)}</div>`;
+    if (data.error) {
+      chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
+      console.error("Chi tiết lỗi:", data.error);
+      return;
     }
 
-    chat.scrollTop = chat.scrollHeight;
+    const botReply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "⚠️ Không có phản hồi từ chatbot.";
+    chat.innerHTML += `<div class="message bot">${botReply}</div>`;
   } catch (error) {
-    chat.innerHTML += `<div class="error">❌ Lỗi API: ${error}</div>`;
+    chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
+    console.error("Chi tiết lỗi:", error);
   }
+
+  chat.scrollTop = chat.scrollHeight;
 }
