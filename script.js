@@ -1,34 +1,43 @@
+const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA"; // 🔑 API key mới
+const MODEL = "gemini-1.5-flash-latest"; // ⚡ model nhẹ, ít lỗi quota
+
 async function sendMessage() {
-  const input = document.getElementById("user-input");
+  const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
-  const userMessage = input.value.trim();
+  const userMessage = input?.value.trim();
   if (!userMessage) return;
 
+  // Hiển thị tin nhắn người dùng
   chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   input.value = "";
 
   try {
     const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=" + API_KEY,
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: userMessage }] }],
-          generationConfig: { temperature: 0.7, topP: 0.9 }
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: userMessage }]
+            }
+          ],
+          system_instruction: {
+            role: "system",
+            parts: [
+              {
+                text: "Bạn là Greenie — chatbot AI nghiên cứu khoa học về giấy nảy mầm từ lục bình 🌱. Hãy trả lời thân thiện, dễ hiểu và ngắn gọn."
+              }
+            ]
+          }
         }),
       }
     );
 
+    // Xử lý phản hồi
     const data = await res.json();
-
-    // Kiểm tra lỗi 503 và tự động thử lại
-    if (data.error?.code === 503) {
-      chat.innerHTML += `<div class="message error">⚠️ Máy chủ quá tải. Đang thử lại sau 5 giây...</div>`;
-      console.warn("Máy chủ quá tải, thử lại sau...");
-      setTimeout(sendMessage, 5000);
-      return;
-    }
 
     if (data.error) {
       chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
@@ -36,9 +45,20 @@ async function sendMessage() {
       return;
     }
 
-    const botReply =
+    // Làm sạch Markdown để không có dấu **, *...
+    const cleanText = (text) => {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/_(.*?)_/g, '$1')
+        .replace(/#+\s?(.*)/g, '$1');
+    };
+
+    const botReplyRaw =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ Không có phản hồi từ chatbot.";
+    const botReply = cleanText(botReplyRaw);
+
     chat.innerHTML += `<div class="message bot">${botReply}</div>`;
   } catch (error) {
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
