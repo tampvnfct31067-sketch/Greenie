@@ -54,3 +54,4 @@ async function sendMessage() {
 
   chat.scrollTop = chat.scrollHeight;
 }
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
