@@ -1,6 +1,5 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.0-pro-exp-02-05"; // hoặc "gemini-1.5-pro" nếu bạn có quyền
-
+const MODEL = "gemini-2.0-pro-exp-02-05"; 
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
@@ -13,7 +12,7 @@ async function sendMessage() {
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
