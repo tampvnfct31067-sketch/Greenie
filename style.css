@@ -80,7 +80,7 @@ h2 {
 }
 
 /* ✏️ Ô nhập câu hỏi */
-#user-input {
+#userInput {
   width: 65%;
   padding: 14px;
   font-size: 16px;
@@ -90,7 +90,7 @@ h2 {
   transition: 0.2s;
 }
 
-#user-input:focus {
+#userInput:focus {
   border-color: #52b788;
   box-shadow: 0 0 5px #95d5b2;
 }
