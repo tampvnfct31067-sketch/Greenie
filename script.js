@@ -1,47 +1,44 @@
 const API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-const MODEL = "gemini-2.0-pro-exp-02-05";
+const MODEL = "gemini-2.0-pro-exp-02-05"; // Hoặc gemini-2.5-flash
 
 async function sendMessage() {
-  // SỬA: Đã sửa id trong index.html thành user-input để khớp với CSS
-  const input = document.getElementById("user-input"); 
+  const input = document.getElementById("user-input"); // Đảm bảo ID này khớp với HTML
   const chat = document.getElementById("chat");
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // 📌 SỬA: Dùng class .user-msg thay cho .message user để khớp với style.css
-  chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`; 
+  chat.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
   input.value = "";
 
- try {
+  try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // 📌 SỬA LỖI Ở ĐÂY: Loại bỏ 'system_instruction'
+          // 🚨 Đã sửa: Thay vì dùng trường system_instruction, 
+          // ta đưa hướng dẫn hệ thống vào mảng contents với role: "system"
           contents: [
-            // 1. Thêm System Instruction dưới dạng tin nhắn 'system'
             { 
                 role: "system", 
                 parts: [
                     { 
+                        // Nội dung hướng dẫn hệ thống
                         text: "Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. Hãy trả lời thân thiện, rõ ràng, không dùng dấu *."
                     }
                 ]
             },
-            // 2. Thêm tin nhắn của người dùng
+            // Tin nhắn của người dùng sau đó
             { role: "user", parts: [{ text: userMessage }] }
           ],
-          // TRƯỜNG "system_instruction" ĐÃ BỊ LOẠI BỎ
         }),
       }
     );
-   
+
     const data = await res.json();
 
     if (data.error) {
-      // 📌 SỬA: Dùng class .error để khớp với style.css
       chat.innerHTML += `<div class="message error">❌ Lỗi API: ${data.error.message}</div>`;
       console.error("Chi tiết lỗi:", data.error);
       return;
@@ -50,10 +47,8 @@ async function sendMessage() {
     const botReply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ Không có phản hồi từ chatbot.";
-    // 📌 SỬA: Dùng class .bot-msg thay cho .message bot để khớp với style.css
     chat.innerHTML += `<div class="message bot-msg">${botReply}</div>`; 
   } catch (error) {
-    // 📌 SỬA: Dùng class .error để khớp với style.css
     chat.innerHTML += `<div class="message error">❌ Lỗi kết nối: ${error.message}</div>`;
     console.error("Chi tiết lỗi:", error);
   }
@@ -61,10 +56,10 @@ async function sendMessage() {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Gắn sự kiện nút gửi: ID "sendBtn" đã đúng và không cần sửa.
+// Gắn sự kiện nút gửi
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
-// 📌 THÊM: Gắn sự kiện nhấn Enter để gửi tin nhắn (trải nghiệm tốt hơn)
+// Gắn sự kiện nhấn Enter
 document.getElementById("user-input").addEventListener("keypress", (e) => {
   if (e.key === 'Enter') {
     sendMessage();
