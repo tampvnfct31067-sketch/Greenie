@@ -16,7 +16,7 @@ public class App {
         "Bạn là Greenie 🌱— chatbot AI hỗ trợ nghiên cứu khoa học cho đề tài “Nghiên cứu quy trình sản xuất giấy nảy mầm thân thiện môi trường từ cây lục bình (Eichhornia crassipes)”.\n\n" +
         "--- QUY TẮC CỨNG TUYỆT ĐỐI ---\n" +
         "1. **Phạm vi Duy nhất:** Greenie **CHỈ VÀ CHỈ ĐƯỢC PHÉP TRẢ LỜI** các câu hỏi liên quan trực tiếp đến **giấy nảy mầm, cây lục bình, quy trình sản xuất, ứng dụng sinh thái, và bảo vệ môi trường**.\n" +
-        "2. **Xử lý Câu hỏi Ngoài Phạm vi (BẮT BUỘC DÙNG MẪU):** Nếu người dùng hỏi bất kỳ chủ đề nào **KHÔNG LIÊN QUAN** (ví dụ: lịch sử, chính trị, tôn giáo, giải trí, sức khỏe, công nghệ khác, hoặc thông tin cá nhân), bạn **PHẢI DỪNG LẠI** và **TUYỆT ĐỐI PHẢI** trả lời bằng mẫu sau:\n" +
+        "2. **Xử lý Câu hỏi Ngoài Phạm vi (QUY TẮC BẮT BUỘC):** Greenie phải **KIỂM TRA ĐẦU TIÊN** xem câu hỏi có thuộc phạm vi nghiên cứu (giấy nảy mầm, lục bình) hay không. Nếu câu hỏi **KHÔNG LIÊN QUAN**, bạn **TUYỆT ĐỐI PHẢI** BỎ QUA tất cả các dữ liệu nền và **BẮT BUỘC** trả lời bằng mẫu sau:\n" +
         "> 🌿 “Xin lỗi nhé! Greenie chỉ được thiết kế để chia sẻ thông tin liên quan đến giấy nảy mầm và cây lục bình trong khuôn khổ nghiên cứu môi trường. Bạn có muốn mình kể cho bạn nghe thêm về quy trình làm giấy nảy mầm không?”\n" +
         "3. **Xử lý Nội dung Độc hại/Phi khoa học:** Nếu câu hỏi nhạy cảm hoặc phi khoa học, bạn **TUYỆT ĐỐI PHẢI** dùng mẫu sau:\n" +
         "> 🌱 “Xin lỗi, câu hỏi này nằm ngoài phạm vi khoa học và môi trường mà Greenie có thể chia sẻ. Mình có thể giúp bạn tìm hiểu thêm về tác động môi trường của giấy nảy mầm nhé!”\n" +
@@ -84,7 +84,8 @@ public class App {
                 .build()
         );
 
-        String model = "gemini-2.5-pro";
+        // 💡 THAY ĐỔI: Sử dụng model Gemini 2.5 Flash
+        String model = "gemini-2.5-flash"; 
         
         // 2. Nội dung Chat (Gộp Cảnh báo + Dữ liệu nền + Input người dùng)
         String user_input_placeholder = "INSERT_INPUT_HERE";
@@ -94,6 +95,13 @@ public class App {
             BACKGROUND_DATA + 
             "Yêu cầu của người dùng: " + user_input_placeholder;
 
+        // 💡 (DEBUG) In ra prompt cuối cùng trước khi gửi đi để kiểm tra
+        System.out.println("--- SYSTEM PROMPT GỬI ĐI ---");
+        System.out.println(SYSTEM_PROMPT);
+        System.out.println("--- USER PROMPT GỬI ĐI ---");
+        System.out.println(final_user_prompt);
+        System.out.println("---------------------------------");
+        
         List<Content> contents = ImmutableList.of(
             Content.builder()
                 .role("user")
