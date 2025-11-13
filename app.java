@@ -1,16 +1,10 @@
 package com.example;
 
-import com.google.common.collect.ImmutableList;
-import com.google.genai.Client;
-import com.google.genai.ResponseStream;
-import com.google.genai.types.*;
-
-import java.util.ArrayList;
-import java.util.List;
+// ... (các import giữ nguyên)
 
 public class App {
 
-    // 1. Chuỗi LỆNH HỆ THỐNG (SYSTEM_PROMPT): Tập trung vào cấm đoán và lệnh duy nhất
+    // 1. Chuỗi LỆNH HỆ THỐNG (SYSTEM_PROMPT): Tập trung vào cấm đoán
     private static final String SYSTEM_PROMPT = 
         "**[LỆNH CẤM TUYỆT ĐỐI]**\n" +
         "Bạn là chatbot Greenie, chỉ hỗ trợ thông tin về **giấy nảy mầm** và **cây lục bình**.\n" +
@@ -19,35 +13,28 @@ public class App {
         "🌿 “Xin lỗi nhé! Greenie chỉ được thiết kế để chia sẻ thông tin liên quan đến giấy nảy mầm và cây lục bình trong khuôn khổ nghiên cứu môi trường. Bạn có muốn mình kể cho bạn nghe thêm về quy trình làm giấy nảy mầm không?”\n" +
         "------------------------";
         
-    // DỮ LIỆU CỐT LÕI (BACKGROUND_DATA) ĐÃ BỊ LOẠI BỎ KHỎI LẦN NÀY ĐỂ GIẢM PHÂN TÂM CHO MÔ HÌNH.
+    // DỮ LIỆU CỐT LÕI (BACKGROUND_DATA) KHÔNG CÓ TRONG LẦN NÀY
 
     public static void main(String[] args) {
         String apiKey = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
         Client client = Client.builder().apiKey(apiKey).build();
 
-        // 1. Cấu hình Tools (Google Search)
+        // Cấu hình Tools (Google Search)
         List<Tool> tools = new ArrayList<>();
         tools.add(Tools.builder().googleSearch(GoogleSearch.builder().build()).build());
 
-        String model = "gemini-2.5-flash"; // Model được chọn để tăng tính tuân thủ
+        String model = "gemini-2.5-flash"; 
         
-        // 2. Nội dung Chat: Thêm rào cản cưỡng chế vào prompt người dùng
+        // 2. Nội dung Chat: Thêm rào cản cưỡng chế
         String user_input_placeholder = "INSERT_INPUT_HERE";
         
         String final_user_prompt = 
-            // 🚨 TẠO RÀO CẢN CƯỠNG CHẾ BẰNG MARKDOWN
+            // 🚨 TẠO RÀO CẢN CƯỠNG CHẾ
             "***\n" +
             "***DỪNG LẠI! TRƯỚC KHI TRẢ LỜI, BẠN PHẢI KIỂM TRA MẪU TỪ CHỐI BẮT BUỘC TRONG SYSTEM INSTRUCTION.***\n" +
             "***NẾU CÂU HỎI KHÔNG LIÊN QUAN ĐẾN GIẤY NẢY MẦM, SỬ DỤNG MẪU ĐÓ.***\n" +
             "***\n" +
             "Yêu cầu của người dùng: " + user_input_placeholder;
-        
-        // DEBUG: In ra Prompt
-        System.out.println("--- SYSTEM PROMPT GỬI ĐI ---");
-        System.out.println(SYSTEM_PROMPT);
-        System.out.println("--- USER PROMPT GỬI ĐI ---");
-        System.out.println(final_user_prompt);
-        System.out.println("---------------------------------");
         
         List<Content> contents = ImmutableList.of(
             Content.builder()
@@ -58,10 +45,12 @@ public class App {
                 .build()
         );
 
+        // ... (Phần 3, 4, 5 giữ nguyên: temperature(0.0), config, gọi API)
+        
         // 3. Cấu hình GenerationConfig (Giảm nhiệt độ để tuân thủ)
         GenerationConfig generationConfig =
             GenerationConfig.builder()
-                .temperature(0.0) // Nhiệt độ bằng 0.0
+                .temperature(0.0)
                 .build();
         
         // 4. Cấu hình GenerateContentConfig
@@ -77,7 +66,7 @@ public class App {
             .tools(tools)
             .generationConfig(generationConfig)
             .systemInstruction(
-                Content.fromParts(Part.fromText(SYSTEM_PROMPT)) // Lệnh cấm tuyệt đối
+                Content.fromParts(Part.fromText(SYSTEM_PROMPT))
             )
             .build();
 
