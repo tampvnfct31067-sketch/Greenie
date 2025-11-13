@@ -1,74 +1,91 @@
 package com.example;
 
+import com.google.common.collect.ImmutableList;
 import com.google.genai.Client;
-import com.google.genai.Response;
-import com.google.genai.types.Content;
-import com.google.genai.types.Part;
-import com.google.genai.types.GenerateContentRequest;
-import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.ResponseStream;
+import com.google.genai.types.*;
+import com.google.gson.Gson;
 
-import java.util.Scanner;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ChatbotGreenie {
-
-    private static final String API_KEY = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
-    private static final String MODEL = "gemini-2.0-pro-exp-02-05";
-    private final Client client;
-
-    public ChatbotGreenie() {
-        this.client = new Client(API_KEY);
-    }
-
-    public String sendMessage(String userMessage) {
-        try {
-            // Chuẩn bị nội dung yêu cầu
-            Content userContent = new Content("user", List.of(new Part(userMessage)));
-            Content systemInstruction = new Content("system", List.of(
-                    new Part("Bạn là Greenie 🌱 — chatbot hỗ trợ nghiên cứu khoa học về giấy nảy mầm từ cây lục bình. "
-                            + "Hãy trả lời thân thiện, rõ ràng, không dùng dấu *.")
-            ));
-
-            GenerateContentRequest request = new GenerateContentRequest.Builder()
-                    .setModel(MODEL)
-                    .setContents(List.of(userContent))
-                    .setSystemInstruction(systemInstruction)
-                    .build();
-
-            // Gửi yêu cầu đến API Gemini
-            GenerateContentResponse response = client.models().generateContent(request);
-
-            // Trích xuất phản hồi
-            if (response.getCandidates() != null && !response.getCandidates().isEmpty()) {
-                return response.getCandidates().get(0).getContent().getParts().get(0).getText();
-            } else {
-                return "⚠️ Không có phản hồi từ chatbot.";
-            }
-
-        } catch (Exception e) {
-            System.err.println("❌ Lỗi API: " + e.getMessage());
-            return "❌ Lỗi: " + e.getMessage();
-        }
-    }
-
+public class App {
     public static void main(String[] args) {
-        ChatbotGreenie bot = new ChatbotGreenie();
-        Scanner scanner = new Scanner(System.in);
+        String apiKey = "AIzaSyCiBzyvRsKREQsXNIZYjAoionJrV_S_wuA";
+        Client client = Client.builder().apiKey(apiKey).build();
+        Gson gson = new Gson();
 
-        System.out.println("🌿 Greenie sẵn sàng! Hỏi tôi về nghiên cứu giấy nảy mầm từ cây lục bình nhé.");
-        System.out.println("Nhập 'exit' để thoát.\n");
+        // 🧰 Cấu hình công cụ (nếu cần)
+        List<Tool> tools = new ArrayList<>();
 
-        while (true) {
-            System.out.print("👤 Bạn: ");
-            String userInput = scanner.nextLine();
+        // 🔹 Chọn model ổn định và hợp lệ
+        String model = "gemini-2.0-pro-exp-02-05";
 
-            if (userInput.equalsIgnoreCase("exit")) break;
+        // 🧠 Nội dung người dùng nhập (bạn có thể thay INSERT_INPUT_HERE bằng input thực tế)
+        List<Content> contents = ImmutableList.of(
+                Content.builder()
+                        .role("user")
+                        .parts(ImmutableList.of(
+                                Part.fromText("INSERT_INPUT_HERE")
+                        ))
+                        .build()
+        );
 
-            String reply = bot.sendMessage(userInput);
-            System.out.println("🤖 Greenie: " + reply + "\n");
+        // 🌿 PROMPT hệ thống (Greenie)
+        String systemPrompt = """
+Bạn là Greenie — một chatbot AI hỗ trợ nghiên cứu khoa học cho đề tài “Nghiên cứu quy trình sản xuất giấy nảy mầm thân thiện môi trường từ cây lục bình (Eichhornia crassipes)”.  
+Nhiệm vụ của bạn là cung cấp thông tin, giải thích và hướng dẫn liên quan đến giấy nảy mầm, bao gồm:
+1️⃣ Giới thiệu & thông tin chung
+2️⃣ Cách sử dụng giấy nảy mầm
+3️⃣ Bảo quản & lưu ý
+4️⃣ Loại hạt và ứng dụng
+5️⃣ Tác động môi trường & giáo dục
+6️⃣ Hỗ trợ người dùng
+
+---
+
+## 🚫 Giới hạn phạm vi & xử lý câu hỏi ngoài chuyên môn
+
+- Greenie **chỉ được phép trả lời** các câu hỏi liên quan đến **giấy nảy mầm, cây lục bình, quy trình sản xuất, ứng dụng, và bảo vệ môi trường**.  
+- Nếu người dùng hỏi về **chủ đề ngoài phạm vi**, hãy lịch sự từ chối bằng:
+
+> 🌿 “Xin lỗi nhé! Greenie chỉ được thiết kế để chia sẻ thông tin liên quan đến giấy nảy mầm và cây lục bình trong khuôn khổ nghiên cứu môi trường.  
+> Bạn có muốn mình kể cho bạn nghe thêm về quy trình làm giấy nảy mầm không?”
+
+---
+
+💬 **Phong cách phản hồi:**
+- Giọng điệu thân thiện, gần gũi.
+- Có thể dùng emoji 🌱, 🌾, 🌼, hoặc 🌍.
+- Luôn khuyến khích bảo vệ môi trường và sáng tạo xanh.
+""";
+
+        // ⚙️ Cấu hình sinh nội dung
+        GenerateContentConfig config = GenerateContentConfig.builder()
+                .systemInstruction(Content.fromParts(Part.fromText(systemPrompt)))
+                .build();
+
+        // 🚀 Gọi API stream
+        ResponseStream<GenerateContentResponse> responseStream =
+                client.models().generateContentStream(model, contents, config);
+
+        System.out.println("🌱 Greenie đang phản hồi...\n");
+
+        // 📤 In kết quả ra console
+        for (GenerateContentResponse res : responseStream) {
+            if (res.candidates().isEmpty()) continue;
+
+            var candidate = res.candidates().get(0);
+            if (candidate.content().isEmpty() || candidate.content().get().parts().isEmpty()) continue;
+
+            for (Part part : candidate.content().get().parts().get()) {
+                if (part.text() != null && !part.text().isEmpty()) {
+                    System.out.print(part.text());
+                }
+            }
         }
 
-        scanner.close();
+        responseStream.close();
+        System.out.println("\n\n✅ Kết thúc phản hồi từ Greenie.");
     }
 }
