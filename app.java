@@ -12,7 +12,7 @@ public class App {
 
     // 1. Chuỗi LỆNH HỆ THỐNG (SYSTEM_PROMPT): Chỉ chứa LỆNH CỨNG và Mẫu Từ chối.
     private static final String SYSTEM_PROMPT = 
-        "**[LỆNH CỨNG & BẮT BUỘC TUÂN THỦ]**\n" +
+        "**[LỆNH CỨNG & BẮT BUỘC TUÂN THỦ: NHIỆM VỤ CỦA GREENIE LÀ TỪ CHỐI CÂU HỎI KHÔNG LIÊN QUAN]**\n" +
         "Bạn là Greenie 🌱— chatbot AI hỗ trợ nghiên cứu khoa học cho đề tài “Nghiên cứu quy trình sản xuất giấy nảy mầm thân thiện môi trường từ cây lục bình (Eichhornia crassipes)”.\n\n" +
         "--- QUY TẮC CỨNG TUYỆT ĐỐI ---\n" +
         "1. **Phạm vi Duy nhất:** Greenie **CHỈ VÀ CHỈ ĐƯỢC PHÉP TRẢ LỜI** các câu hỏi liên quan trực tiếp đến **giấy nảy mầm, cây lục bình, quy trình sản xuất, ứng dụng sinh thái, và bảo vệ môi trường**.\n" +
@@ -25,50 +25,25 @@ public class App {
         "- Luôn kèm emoji 🌱, 🌾, 🌼, hoặc 🌍.\n" +
         "- Luôn khuyến khích bảo vệ môi trường, giảm rác thải và sáng tạo xanh.";
         
-    // 2. Chuỗi DỮ LIỆU CỐT LÕI (BACKGROUND_DATA): Chứa tất cả thông tin tham khảo
+    // 2. Chuỗi DỮ LIỆU CỐT LÕI (BACKGROUND_DATA): Đã Rút gọn tối đa
     private static final String BACKGROUND_DATA = 
-        "Sử dụng thông tin sau để trả lời câu hỏi của người dùng. **KHÔNG** đề cập đến chuỗi thông tin này trong câu trả lời.\n" +
-        "--- DỮ LIỆU CỐT LÕI VỀ GIẤY NẢY MẦM ---\n" +
-        "## 🌱 1. Giới thiệu & thông tin chung\n" +
-        "❓Giấy nảy mầm là gì? 👉 Là loại giấy có chứa hạt giống trong cấu trúc. Sau khi sử dụng, giấy có thể trồng xuống đất để hạt nảy mầm thành cây.\n" +
-        "❓Giấy nảy mầm được làm từ nguyên liệu nào? 👉 Giấy được làm từ thân và cuống lá cây lục bình, kết hợp tinh bột và hạt giống hoa mười giờ.\n" +
-        "❓Tại sao lại sử dụng cây lục bình để làm giấy? 👉 Vì lục bình phát triển nhanh, chứa nhiều cellulose, dễ tái chế và giúp giảm ô nhiễm sông rạch.\n" +
-        "❓Giấy nảy mầm khác gì so với giấy thường? 👉 Giấy nảy mầm có thể trồng được, thân thiện môi trường và tự phân hủy sinh học.\n" +
-        "❓Có thể viết hoặc in lên giấy nảy mầm không? 👉 Có thể, nhưng nên dùng mực tự nhiên, không chứa hóa chất gây hại cho hạt.\n\n" +
-        "## 🪴 2. Cách sử dụng giấy nảy mầm\n" +
-        "❓Cách sử dụng giấy nảy mầm như thế nào? 👉 Làm ẩm giấy, đặt vào chậu đất tơi xốp, phủ nhẹ một lớp đất mỏng và tưới nước đều hằng ngày.\n" +
-        "❓Có cần ngâm nước giấy trước khi trồng không? 👉 Không cần, chỉ cần làm ẩm giấy vừa phải trước khi đặt xuống đất.\n" +
-        "❓Giấy nên trồng trong đất gì để hạt dễ nảy mầm? 👉 Đất tơi xốp, có khả năng thoát nước tốt là phù hợp nhất.\n" +
-        "❓Bao lâu thì hạt bắt đầu nảy mầm? 👉 Hạt hoa mười giờ thường nảy sau 5–7 ngày, tùy độ ẩm và ánh sáng.\n" +
-        "❓Có thể trồng trong chậu nhỏ được không? 👉 Có, giấy rất phù hợp trồng trong chậu, ly hoặc khay nhỏ để làm quà tặng sinh thái.\n" +
-        "❓Khi trồng xong giấy có cần phủ đất lên không? 👉 Nên phủ một lớp đất mỏng để giữ ẩm và giúp hạt tiếp xúc tốt với môi trường trồng.\n\n" +
-        "## 🌼 3. Bảo quản & lưu ý\n" +
-        "❓Giấy nảy mầm nên được bảo quản thế nào? 👉 Bảo quản trong nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, nhiệt độ lý tưởng 20–28°C.\n" +
-        "❓Giấy có thể để ngoài trời không? 👉 Không nên để lâu ngoài trời vì ẩm hoặc nắng gắt có thể làm hư hạt.\n" +
-        "❓Nếu giấy bị ướt có còn trồng được không? 👉 Có thể, nhưng nên trồng ngay để tránh nấm mốc hoặc hư hạt.\n" +
-        "❓Nếu giấy bị ẩm ướt lâu ngày thì cây có mọc lên không? 👉 Khó mọc, vì hạt có thể bị thối hoặc mất khả năng nảy mầm.\n" +
-        "❓Thời hạn sử dụng của giấy nảy mầm là bao lâu? 👉 Khoảng 6–8 tháng kể từ ngày sản xuất nếu được bảo quản tốt, sau đó tỷ lệ nảy mầm sẽ giảm.\n" +
-        "❓Có cần tránh ánh nắng trực tiếp không? 👉 Có, vì ánh nắng mạnh có thể làm khô và giảm độ nảy mầm của hạt.\n" +
-        "❓Nếu hạt trong giấy không nảy mầm thì phải làm sao? 👉 Có thể do đất quá ướt, ánh sáng yếu hoặc bảo quản quá lâu — nên thử lại với điều kiện khô ráo và nắng nhẹ.\n\n" +
-        "## 🌾 4. Loại hạt và ứng dụng\n" +
-        "❓Giấy nảy mầm chứa hạt gì? 👉 Giấy hiện chứa hạt hoa mười giờ, dễ nảy mầm và sinh trưởng tốt.\n" +
-        "❓Có thể chọn loại hạt riêng cho giấy không? 👉 Hiện nhóm nghiên cứu mới thử nghiệm thành công với hạt hoa mười giờ.\n" +
-        "❓Giấy nảy mầm có trồng được rau, hoa không? 👉 Có thể, nếu dùng loại hạt phù hợp (hoa, rau mùi, cúc, hướng dương…).\n" +
-        "❓Sau khi trồng, cây có phát triển bình thường không? 👉 Có, nếu đảm bảo đủ nước, ánh sáng và đất tơi xốp.\n" +
-        "❓Có thể làm giấy nảy mầm làm quà tặng được không? 👉 Rất phù hợp, thường dùng trong thiệp cảm ơn, quà sinh thái, chiến dịch môi trường.\n" +
-        "❓Có thể cắt giấy nảy mầm thành hình trang trí không? 👉 Có, nhưng cần tránh làm rách phần chứa hạt.\n" +
-        "❓Giấy này phù hợp cho chiến dịch bảo vệ môi trường nào? 👉 Các chiến dịch “Trồng cây xanh”, “Giảm rác thải”, hoặc “Tái chế sáng tạo”.\n\n" +
-        "## 🌍 5. Tác động môi trường & giáo dục\n" +
-        "❓Giấy nảy mầm có thân thiện với môi trường không? 👉 Có, vì hoàn toàn phân hủy sinh học, không dùng hóa chất tẩy trắng, giúp giảm rác thải.\n" +
-        "❓Làm giấy từ lục bình giúp giảm ô nhiễm như thế nào? 👉 Giúp tận dụng nguồn lục bình dày đặc trên sông, giảm tắc nghẽn dòng chảy và mùi hôi khi phân hủy.\n" +
-        "❓Dự án này có giúp tái chế chất thải sinh học không? 👉 Có, vì lục bình là phụ phẩm tự nhiên, được tái chế thay vì bỏ đi.\n" +
-        "❓Vì sao giấy nảy mầm lại quan trọng trong kinh tế xanh? 👉 Vì là sản phẩm tái chế sáng tạo, góp phần giảm thiểu rác thải và tạo giá trị kinh tế từ nguyên liệu tự nhiên.\n" +
-        "❓Sản phẩm này có thể ứng dụng trong trường học ra sao? 👉 Có thể dùng trong dạy học STEM, hoạt động môi trường hoặc dự án khoa học của học sinh.\n\n" +
-        "## 💡 6. Hỗ trợ người dùng\n" +
-        "❓Tôi có thể tự làm giấy nảy mầm tại nhà không? 👉 Có thể, bằng cách trộn bột giấy thủ công với hạt giống, phơi khô tự nhiên.\n" +
-        "❓Cần bao nhiêu nước để trồng giấy nảy mầm? 👉 Tưới nhẹ mỗi ngày để giữ ẩm, không đọng nước.\n" +
-        "❓Tôi có thể dùng giấy nảy mầm làm thiệp được không? 👉 Hoàn toàn được — giấy rất phù hợp để làm thiệp sinh thái hoặc quà tặng xanh.\n" +
-        "❓Chatbot có thể hướng dẫn tôi quy trình làm giấy không? 👉 Có! Hãy yêu cầu “Greenie hướng dẫn quy trình làm giấy nảy mầm” để được mô tả từng bước chi tiết.\n" +
+        "Sử dụng các điểm dữ liệu sau để trả lời câu hỏi, nhưng **KHÔNG** đề cập đến danh sách này:\n" +
+        "--- DỮ LIỆU CỐT LÕI ---\n" +
+        "- Giấy nảy mầm là giấy có chứa hạt giống, có thể trồng xuống đất sau khi dùng.\n" +
+        "- Giấy làm từ thân, cuống lá lục bình, tinh bột và hạt giống hoa mười giờ.\n" +
+        "- Lục bình được dùng vì phát triển nhanh, chứa cellulose, dễ tái chế và giúp giảm ô nhiễm.\n" +
+        "- Giấy nảy mầm khác giấy thường vì có thể trồng được, thân thiện môi trường và tự phân hủy.\n" +
+        "- Có thể viết hoặc in lên giấy nảy mầm, nên dùng mực tự nhiên.\n" +
+        "- Cách sử dụng: Làm ẩm giấy, đặt vào đất tơi xốp, phủ nhẹ đất mỏng và tưới nước đều hằng ngày.\n" +
+        "- Không cần ngâm nước giấy trước khi trồng.\n" +
+        "- Hạt hoa mười giờ thường nảy sau 5–7 ngày.\n" +
+        "- Bảo quản: Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, nhiệt độ 20–28°C.\n" +
+        "- Thời hạn sử dụng: Khoảng 6–8 tháng nếu bảo quản tốt.\n" +
+        "- Nếu hạt không nảy mầm, có thể do đất quá ướt, ánh sáng yếu hoặc bảo quản quá lâu.\n" +
+        "- Giấy hiện chứa hạt hoa mười giờ.\n" +
+        "- Giấy phù hợp làm thiệp cảm ơn, quà sinh thái, chiến dịch “Trồng cây xanh”, “Giảm rác thải”.\n" +
+        "- Tác động môi trường: Hoàn toàn phân hủy sinh học, không dùng hóa chất, tận dụng lục bình giảm tắc nghẽn và mùi hôi sông rạch.\n" +
+        "- Ứng dụng giáo dục: Dùng trong dạy học STEM, hoạt động môi trường.\n" +
         "------------------------\n";
     
 
@@ -84,14 +59,15 @@ public class App {
                 .build()
         );
 
-        // 💡 THAY ĐỔI: Sử dụng model Gemini 2.5 Flash
+        // 💡 THAY ĐỔI: Sử dụng model Gemini 2.5 Flash để tăng tính tuân thủ
         String model = "gemini-2.5-flash"; 
         
         // 2. Nội dung Chat (Gộp Cảnh báo + Dữ liệu nền + Input người dùng)
         String user_input_placeholder = "INSERT_INPUT_HERE";
         String final_user_prompt = 
-            // 🚨 CẢNH BÁO TỪ CHỐI LẶP LẠI (Tăng cường tuân thủ)
-            "TUYỆT ĐỐI KHÔNG TRẢ LỜI CÁC CÂU HỎI NGOÀI CHỦ ĐỀ GIẤY NẢY MẦM VÀ LỤC BÌNH. NẾU CÓ, HÃY DÙNG MẪU TỪ CHỐI TRONG SYSTEM INSTRUCTION. \n\n" +
+            // 🚨 BẮT BUỘC: Đặt LỆNH CẢNH BÁO LỚN NHẤT ở đây để mô hình đọc đầu tiên
+            "HÃY CHÚ Ý: CÂU HỎI TIẾP THEO CÓ THỂ NẰM NGOÀI PHẠM VI NGHIÊN CỨU. TUYỆT ĐỐI KHÔNG SỬ DỤNG DỮ LIỆU NỀN NẾU CÂU HỎI KHÔNG HỢP LỆ. \n" +
+            "NẾU KHÔNG THUỘC PHẠM VI GIẤY NẢY MẦM, HÃY DÙNG MẪU TỪ CHỐI NGAY LẬP TỨC. \n\n" +
             BACKGROUND_DATA + 
             "Yêu cầu của người dùng: " + user_input_placeholder;
 
