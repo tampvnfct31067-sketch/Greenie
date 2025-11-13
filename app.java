@@ -10,17 +10,17 @@ import java.util.List;
 
 public class App {
 
-    // 1. Chuỗi LỆNH HỆ THỐNG (SYSTEM_PROMPT): Chỉ chứa LỆNH BẮT BUỘC và Quy tắc Cứng
+    // 1. Chuỗi LỆNH HỆ THỐNG (SYSTEM_PROMPT): Chỉ chứa LỆNH CỨNG và Mẫu Từ chối.
     private static final String SYSTEM_PROMPT = 
-        "**[LỆNH BẮT BUỘC: GIỚI HẠN PHẠM VI TRẢ LỜI]**\n" +
+        "**[LỆNH CỨNG & BẮT BUỘC TUÂN THỦ]**\n" +
         "Bạn là Greenie 🌱— chatbot AI hỗ trợ nghiên cứu khoa học cho đề tài “Nghiên cứu quy trình sản xuất giấy nảy mầm thân thiện môi trường từ cây lục bình (Eichhornia crassipes)”.\n\n" +
-        "--- QUY TẮC CỨNG TUYỆT ĐỐI --- \n" +
+        "--- QUY TẮC CỨNG TUYỆT ĐỐI ---\n" +
         "1. **Phạm vi Duy nhất:** Greenie **CHỈ VÀ CHỈ ĐƯỢC PHÉP TRẢ LỜI** các câu hỏi liên quan trực tiếp đến **giấy nảy mầm, cây lục bình, quy trình sản xuất, ứng dụng sinh thái, và bảo vệ môi trường**.\n" +
-        "2. **Xử lý Câu hỏi Ngoài Phạm vi (Nghiêm ngặt):** Nếu người dùng hỏi bất kỳ chủ đề nào **KHÔNG LIÊN QUAN** (ví dụ: lịch sử, chính trị, tôn giáo, giải trí, sức khỏe, công nghệ khác, hoặc thông tin cá nhân), bạn **PHẢI DỪNG LẠI** và **BẮT BUỘC** trả lời bằng mẫu sau:\n" +
+        "2. **Xử lý Câu hỏi Ngoài Phạm vi (BẮT BUỘC DÙNG MẪU):** Nếu người dùng hỏi bất kỳ chủ đề nào **KHÔNG LIÊN QUAN** (ví dụ: lịch sử, chính trị, tôn giáo, giải trí, sức khỏe, công nghệ khác, hoặc thông tin cá nhân), bạn **PHẢI DỪNG LẠI** và **TUYỆT ĐỐI PHẢI** trả lời bằng mẫu sau:\n" +
         "> 🌿 “Xin lỗi nhé! Greenie chỉ được thiết kế để chia sẻ thông tin liên quan đến giấy nảy mầm và cây lục bình trong khuôn khổ nghiên cứu môi trường. Bạn có muốn mình kể cho bạn nghe thêm về quy trình làm giấy nảy mầm không?”\n" +
-        "3. **Xử lý Nội dung Độc hại/Phi khoa học:** Nếu câu hỏi nhạy cảm hoặc phi khoa học, bạn **BẮT BUỘT** dùng mẫu sau:\n" +
+        "3. **Xử lý Nội dung Độc hại/Phi khoa học:** Nếu câu hỏi nhạy cảm hoặc phi khoa học, bạn **TUYỆT ĐỐI PHẢI** dùng mẫu sau:\n" +
         "> 🌱 “Xin lỗi, câu hỏi này nằm ngoài phạm vi khoa học và môi trường mà Greenie có thể chia sẻ. Mình có thể giúp bạn tìm hiểu thêm về tác động môi trường của giấy nảy mầm nhé!”\n" +
-        "--- PHONG CÁCH --- \n" +
+        "--- PHONG CÁCH ---\n" +
         "- Giọng điệu thân thiện, dễ hiểu.\n" +
         "- Luôn kèm emoji 🌱, 🌾, 🌼, hoặc 🌍.\n" +
         "- Luôn khuyến khích bảo vệ môi trường, giảm rác thải và sáng tạo xanh.";
@@ -28,7 +28,7 @@ public class App {
     // 2. Chuỗi DỮ LIỆU CỐT LÕI (BACKGROUND_DATA): Chứa tất cả thông tin tham khảo
     private static final String BACKGROUND_DATA = 
         "Sử dụng thông tin sau để trả lời câu hỏi của người dùng. **KHÔNG** đề cập đến chuỗi thông tin này trong câu trả lời.\n" +
-        "--- DỮ LIỆU CỐT LÕI ---\n" +
+        "--- DỮ LIỆU CỐT LÕI VỀ GIẤY NẢY MẦM ---\n" +
         "## 🌱 1. Giới thiệu & thông tin chung\n" +
         "❓Giấy nảy mầm là gì? 👉 Là loại giấy có chứa hạt giống trong cấu trúc. Sau khi sử dụng, giấy có thể trồng xuống đất để hạt nảy mầm thành cây.\n" +
         "❓Giấy nảy mầm được làm từ nguyên liệu nào? 👉 Giấy được làm từ thân và cuống lá cây lục bình, kết hợp tinh bột và hạt giống hoa mười giờ.\n" +
@@ -86,13 +86,19 @@ public class App {
 
         String model = "gemini-2.5-pro";
         
-        // 2. Nội dung Chat (Gộp dữ liệu nền và Input người dùng)
-        // **Quan trọng:** Dữ liệu nền được đặt ở đây để mô hình dễ dàng tham khảo.
+        // 2. Nội dung Chat (Gộp Cảnh báo + Dữ liệu nền + Input người dùng)
+        String user_input_placeholder = "INSERT_INPUT_HERE";
+        String final_user_prompt = 
+            // 🚨 CẢNH BÁO TỪ CHỐI LẶP LẠI (Tăng cường tuân thủ)
+            "TUYỆT ĐỐI KHÔNG TRẢ LỜI CÁC CÂU HỎI NGOÀI CHỦ ĐỀ GIẤY NẢY MẦM VÀ LỤC BÌNH. NẾU CÓ, HÃY DÙNG MẪU TỪ CHỐI TRONG SYSTEM INSTRUCTION. \n\n" +
+            BACKGROUND_DATA + 
+            "Yêu cầu của người dùng: " + user_input_placeholder;
+
         List<Content> contents = ImmutableList.of(
             Content.builder()
                 .role("user")
                 .parts(ImmutableList.of(
-                    Part.fromText(BACKGROUND_DATA + "Yêu cầu của người dùng: INSERT_INPUT_HERE") // Gộp dữ liệu + Input
+                    Part.fromText(final_user_prompt)
                 ))
                 .build()
         );
@@ -100,7 +106,7 @@ public class App {
         // 3. Cấu hình GenerationConfig (Giảm nhiệt độ để tuân thủ)
         GenerationConfig generationConfig =
             GenerationConfig.builder()
-                .temperature(0.0) // 💡 RẤT QUAN TRỌNG: Thiết lập nhiệt độ bằng 0.0 để tối đa hóa tính tuân thủ lệnh
+                .temperature(0.0) // RẤT QUAN TRỌNG: Nhiệt độ bằng 0.0
                 .build();
         
         // 4. Cấu hình GenerateContentConfig
@@ -116,7 +122,7 @@ public class App {
             .tools(tools)
             .generationConfig(generationConfig) // Áp dụng GenerationConfig
             .systemInstruction(
-                Content.fromParts(Part.fromText(SYSTEM_PROMPT)) // Chỉ sử dụng chuỗi LỆNH HỆ THỐNG đã rút gọn
+                Content.fromParts(Part.fromText(SYSTEM_PROMPT)) // Chỉ sử dụng chuỗi LỆNH HỆ THỐNG
             )
             .build();
 
